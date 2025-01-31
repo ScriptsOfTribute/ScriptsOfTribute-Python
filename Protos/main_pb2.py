@@ -22,11 +22,11 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-from Protos import enums_pb2 as enums__pb2
-from Protos import basics_pb2 as basics__pb2
+import enums_pb2 as enums__pb2
+import basics_pb2 as basics__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nmain.proto\x12\x14ScriptsOfTributeGRPC\x1a\x0b\x65nums.proto\x1a\x0c\x62\x61sics.proto\"\x07\n\x05\x45mpty\"^\n\x13SelectPatronRequest\x12\x38\n\x10\x61vailablePatrons\x18\x01 \x03(\x0e\x32\x1e.ScriptsOfTributeGRPC.PatronId\x12\r\n\x05round\x18\x02 \x01(\x05\"\x8d\x01\n\x0bPlayRequest\x12\x32\n\tgameState\x18\x01 \x01(\x0b\x32\x1f.ScriptsOfTributeGRPC.GameState\x12\x31\n\rpossibleMoves\x18\x02 \x03(\x0b\x32\x1a.ScriptsOfTributeGRPC.Move\x12\x17\n\x0fremainingTimeMs\x18\x03 \x01(\x03\"}\n\x0eGameEndRequest\x12\x31\n\x05state\x18\x01 \x01(\x0b\x32\".ScriptsOfTributeGRPC.EndGameState\x12\x38\n\x0f\x66inalBoardState\x18\x02 \x01(\x0b\x32\x1f.ScriptsOfTributeGRPC.GameState\"J\n\x10\x41pplyMoveRequest\x12(\n\x04move\x18\x01 \x01(\x0b\x32\x1a.ScriptsOfTributeGRPC.Move\x12\x0c\n\x04seed\x18\x02 \x01(\x04\"C\n\x0fPatronIdMessage\x12\x30\n\x08patronId\x18\x01 \x01(\x0e\x32\x1e.ScriptsOfTributeGRPC.PatronId\"$\n\tGameState\x12\x17\n\x0fgame_state_json\x18\x01 \x01(\t\"T\n\x0fSeededGameState\x12\x17\n\x0fgame_state_json\x18\x01 \x01(\t\x12\x13\n\x0bInitialSeed\x18\x02 \x01(\x04\x12\x13\n\x0b\x43urrentSeed\x18\x03 \x01(\x04\"3\n\x12RegistrationStatus\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t2\xed\x03\n\tAIService\x12T\n\x0bRegisterBot\x12\x1b.ScriptsOfTributeGRPC.Empty\x1a(.ScriptsOfTributeGRPC.RegistrationStatus\x12J\n\x0ePregamePrepare\x12\x1b.ScriptsOfTributeGRPC.Empty\x1a\x1b.ScriptsOfTributeGRPC.Empty\x12`\n\x0cSelectPatron\x12).ScriptsOfTributeGRPC.SelectPatronRequest\x1a%.ScriptsOfTributeGRPC.PatronIdMessage\x12\x45\n\x04Play\x12!.ScriptsOfTributeGRPC.PlayRequest\x1a\x1a.ScriptsOfTributeGRPC.Move\x12L\n\x07GameEnd\x12$.ScriptsOfTributeGRPC.GameEndRequest\x1a\x1b.ScriptsOfTributeGRPC.Empty\x12G\n\x0b\x43loseServer\x12\x1b.ScriptsOfTributeGRPC.Empty\x1a\x1b.ScriptsOfTributeGRPC.Empty2k\n\rEngineService\x12Z\n\tApplyMove\x12&.ScriptsOfTributeGRPC.ApplyMoveRequest\x1a%.ScriptsOfTributeGRPC.SeededGameStateb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nmain.proto\x12\x14ScriptsOfTributeGRPC\x1a\x0b\x65nums.proto\x1a\x0c\x62\x61sics.proto\"\x07\n\x05\x45mpty\"c\n\x13SelectPatronRequest\x12=\n\x10\x61vailablePatrons\x18\x01 \x03(\x0e\x32#.ScriptsOfTributeGRPC.PatronIdProto\x12\r\n\x05round\x18\x02 \x01(\x05\"\x92\x01\n\x0bPlayRequest\x12\x37\n\tgameState\x18\x01 \x01(\x0b\x32$.ScriptsOfTributeGRPC.GameStateProto\x12\x31\n\rpossibleMoves\x18\x02 \x03(\x0b\x32\x1a.ScriptsOfTributeGRPC.Move\x12\x17\n\x0fremainingTimeMs\x18\x03 \x01(\x03\"\x82\x01\n\x0eGameEndRequest\x12\x31\n\x05state\x18\x01 \x01(\x0b\x32\".ScriptsOfTributeGRPC.EndGameState\x12=\n\x0f\x66inalBoardState\x18\x02 \x01(\x0b\x32$.ScriptsOfTributeGRPC.GameStateProto\"\\\n\x10\x41pplyMoveRequest\x12\x10\n\x08state_id\x18\x01 \x01(\t\x12(\n\x04move\x18\x02 \x01(\x0b\x32\x1a.ScriptsOfTributeGRPC.Move\x12\x0c\n\x04seed\x18\x03 \x01(\x04\"H\n\x0fPatronIdMessage\x12\x35\n\x08patronId\x18\x01 \x01(\x0e\x32#.ScriptsOfTributeGRPC.PatronIdProto\"\x15\n\x07StateId\x12\n\n\x02id\x18\x01 \x01(\t\"\xaf\x04\n\x0eGameStateProto\x12\x10\n\x08state_id\x18\x01 \x01(\t\x12>\n\rpatron_states\x18\x02 \x01(\x0b\x32\'.ScriptsOfTributeGRPC.PatronStatesProto\x12\x45\n\x16tavern_available_cards\x18\x03 \x03(\x0b\x32%.ScriptsOfTributeGRPC.UniqueCardProto\x12:\n\x0b\x62oard_state\x18\x04 \x01(\x0e\x32%.ScriptsOfTributeGRPC.BoardStateProto\x12\x18\n\x10upcoming_effects\x18\x05 \x03(\t\x12\"\n\x1astart_of_next_turn_effects\x18\x06 \x03(\t\x12\x39\n\x0e\x63urrent_player\x18\x07 \x01(\x0b\x32!.ScriptsOfTributeGRPC.PlayerProto\x12<\n\x0c\x65nemy_player\x18\x08 \x01(\x0b\x32&.ScriptsOfTributeGRPC.EnemyPlayerProto\x12\x19\n\x11\x63ompleted_actions\x18\t \x03(\t\x12;\n\x0ctavern_cards\x18\n \x03(\x0b\x32%.ScriptsOfTributeGRPC.UniqueCardProto\x12\x39\n\x0epending_choice\x18\x0b \x01(\x0b\x32!.ScriptsOfTributeGRPC.ChoiceProto\"\xda\x04\n\x14SeededGameStateProto\x12\x10\n\x08state_id\x18\x01 \x01(\t\x12>\n\rpatron_states\x18\x02 \x01(\x0b\x32\'.ScriptsOfTributeGRPC.PatronStatesProto\x12\x45\n\x16tavern_available_cards\x18\x03 \x03(\x0b\x32%.ScriptsOfTributeGRPC.UniqueCardProto\x12:\n\x0b\x62oard_state\x18\x04 \x01(\x0e\x32%.ScriptsOfTributeGRPC.BoardStateProto\x12\x18\n\x10upcoming_effects\x18\x05 \x03(\t\x12\"\n\x1astart_of_next_turn_effects\x18\x06 \x03(\t\x12\x39\n\x0e\x63urrent_player\x18\x07 \x01(\x0b\x32!.ScriptsOfTributeGRPC.PlayerProto\x12\x37\n\x0c\x65nemy_player\x18\x08 \x01(\x0b\x32!.ScriptsOfTributeGRPC.PlayerProto\x12\x19\n\x11\x63ompleted_actions\x18\t \x03(\t\x12;\n\x0ctavern_cards\x18\n \x03(\x0b\x32%.ScriptsOfTributeGRPC.UniqueCardProto\x12\x39\n\x0epending_choice\x18\x0b \x01(\x0b\x32!.ScriptsOfTributeGRPC.ChoiceProto\x12\x13\n\x0bInitialSeed\x18\x0c \x01(\x04\x12\x13\n\x0b\x43urrentSeed\x18\r \x01(\x04\"3\n\x12RegistrationStatus\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x84\x01\n\x10SimulationResult\x12=\n\tgameState\x18\x01 \x01(\x0b\x32*.ScriptsOfTributeGRPC.SeededGameStateProto\x12\x31\n\rpossibleMoves\x18\x02 \x03(\x0b\x32\x1a.ScriptsOfTributeGRPC.Move2\xed\x03\n\tAIService\x12T\n\x0bRegisterBot\x12\x1b.ScriptsOfTributeGRPC.Empty\x1a(.ScriptsOfTributeGRPC.RegistrationStatus\x12J\n\x0ePregamePrepare\x12\x1b.ScriptsOfTributeGRPC.Empty\x1a\x1b.ScriptsOfTributeGRPC.Empty\x12`\n\x0cSelectPatron\x12).ScriptsOfTributeGRPC.SelectPatronRequest\x1a%.ScriptsOfTributeGRPC.PatronIdMessage\x12\x45\n\x04Play\x12!.ScriptsOfTributeGRPC.PlayRequest\x1a\x1a.ScriptsOfTributeGRPC.Move\x12L\n\x07GameEnd\x12$.ScriptsOfTributeGRPC.GameEndRequest\x1a\x1b.ScriptsOfTributeGRPC.Empty\x12G\n\x0b\x43loseServer\x12\x1b.ScriptsOfTributeGRPC.Empty\x1a\x1b.ScriptsOfTributeGRPC.Empty2\x89\x02\n\rEngineService\x12[\n\tApplyMove\x12&.ScriptsOfTributeGRPC.ApplyMoveRequest\x1a&.ScriptsOfTributeGRPC.SimulationResult\x12O\n\x08GetState\x12\x1d.ScriptsOfTributeGRPC.StateId\x1a$.ScriptsOfTributeGRPC.GameStateProto\x12J\n\x0cReleaseState\x12\x1d.ScriptsOfTributeGRPC.StateId\x1a\x1b.ScriptsOfTributeGRPC.Emptyb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,23 +36,27 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_EMPTY']._serialized_start=63
   _globals['_EMPTY']._serialized_end=70
   _globals['_SELECTPATRONREQUEST']._serialized_start=72
-  _globals['_SELECTPATRONREQUEST']._serialized_end=166
-  _globals['_PLAYREQUEST']._serialized_start=169
-  _globals['_PLAYREQUEST']._serialized_end=310
-  _globals['_GAMEENDREQUEST']._serialized_start=312
-  _globals['_GAMEENDREQUEST']._serialized_end=437
-  _globals['_APPLYMOVEREQUEST']._serialized_start=439
-  _globals['_APPLYMOVEREQUEST']._serialized_end=513
-  _globals['_PATRONIDMESSAGE']._serialized_start=515
-  _globals['_PATRONIDMESSAGE']._serialized_end=582
-  _globals['_GAMESTATE']._serialized_start=584
-  _globals['_GAMESTATE']._serialized_end=620
-  _globals['_SEEDEDGAMESTATE']._serialized_start=622
-  _globals['_SEEDEDGAMESTATE']._serialized_end=706
-  _globals['_REGISTRATIONSTATUS']._serialized_start=708
-  _globals['_REGISTRATIONSTATUS']._serialized_end=759
-  _globals['_AISERVICE']._serialized_start=762
-  _globals['_AISERVICE']._serialized_end=1255
-  _globals['_ENGINESERVICE']._serialized_start=1257
-  _globals['_ENGINESERVICE']._serialized_end=1364
+  _globals['_SELECTPATRONREQUEST']._serialized_end=171
+  _globals['_PLAYREQUEST']._serialized_start=174
+  _globals['_PLAYREQUEST']._serialized_end=320
+  _globals['_GAMEENDREQUEST']._serialized_start=323
+  _globals['_GAMEENDREQUEST']._serialized_end=453
+  _globals['_APPLYMOVEREQUEST']._serialized_start=455
+  _globals['_APPLYMOVEREQUEST']._serialized_end=547
+  _globals['_PATRONIDMESSAGE']._serialized_start=549
+  _globals['_PATRONIDMESSAGE']._serialized_end=621
+  _globals['_STATEID']._serialized_start=623
+  _globals['_STATEID']._serialized_end=644
+  _globals['_GAMESTATEPROTO']._serialized_start=647
+  _globals['_GAMESTATEPROTO']._serialized_end=1206
+  _globals['_SEEDEDGAMESTATEPROTO']._serialized_start=1209
+  _globals['_SEEDEDGAMESTATEPROTO']._serialized_end=1811
+  _globals['_REGISTRATIONSTATUS']._serialized_start=1813
+  _globals['_REGISTRATIONSTATUS']._serialized_end=1864
+  _globals['_SIMULATIONRESULT']._serialized_start=1867
+  _globals['_SIMULATIONRESULT']._serialized_end=1999
+  _globals['_AISERVICE']._serialized_start=2002
+  _globals['_AISERVICE']._serialized_end=2495
+  _globals['_ENGINESERVICE']._serialized_start=2498
+  _globals['_ENGINESERVICE']._serialized_end=2763
 # @@protoc_insertion_point(module_scope)

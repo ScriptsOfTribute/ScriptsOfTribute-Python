@@ -3,8 +3,8 @@
 import grpc
 import warnings
 
-from Protos import basics_pb2 as basics__pb2
-from Protos import main_pb2 as main__pb2
+import basics_pb2 as basics__pb2
+import main_pb2 as main__pb2
 
 GRPC_GENERATED_VERSION = '1.68.0'
 GRPC_VERSION = grpc.__version__
@@ -325,7 +325,17 @@ class EngineServiceStub(object):
         self.ApplyMove = channel.unary_unary(
                 '/ScriptsOfTributeGRPC.EngineService/ApplyMove',
                 request_serializer=main__pb2.ApplyMoveRequest.SerializeToString,
-                response_deserializer=main__pb2.SeededGameState.FromString,
+                response_deserializer=main__pb2.SimulationResult.FromString,
+                _registered_method=True)
+        self.GetState = channel.unary_unary(
+                '/ScriptsOfTributeGRPC.EngineService/GetState',
+                request_serializer=main__pb2.StateId.SerializeToString,
+                response_deserializer=main__pb2.GameStateProto.FromString,
+                _registered_method=True)
+        self.ReleaseState = channel.unary_unary(
+                '/ScriptsOfTributeGRPC.EngineService/ReleaseState',
+                request_serializer=main__pb2.StateId.SerializeToString,
+                response_deserializer=main__pb2.Empty.FromString,
                 _registered_method=True)
 
 
@@ -338,13 +348,35 @@ class EngineServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetState(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ReleaseState(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_EngineServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ApplyMove': grpc.unary_unary_rpc_method_handler(
                     servicer.ApplyMove,
                     request_deserializer=main__pb2.ApplyMoveRequest.FromString,
-                    response_serializer=main__pb2.SeededGameState.SerializeToString,
+                    response_serializer=main__pb2.SimulationResult.SerializeToString,
+            ),
+            'GetState': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetState,
+                    request_deserializer=main__pb2.StateId.FromString,
+                    response_serializer=main__pb2.GameStateProto.SerializeToString,
+            ),
+            'ReleaseState': grpc.unary_unary_rpc_method_handler(
+                    servicer.ReleaseState,
+                    request_deserializer=main__pb2.StateId.FromString,
+                    response_serializer=main__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -373,7 +405,61 @@ class EngineService(object):
             target,
             '/ScriptsOfTributeGRPC.EngineService/ApplyMove',
             main__pb2.ApplyMoveRequest.SerializeToString,
-            main__pb2.SeededGameState.FromString,
+            main__pb2.SimulationResult.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetState(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ScriptsOfTributeGRPC.EngineService/GetState',
+            main__pb2.StateId.SerializeToString,
+            main__pb2.GameStateProto.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ReleaseState(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ScriptsOfTributeGRPC.EngineService/ReleaseState',
+            main__pb2.StateId.SerializeToString,
+            main__pb2.Empty.FromString,
             options,
             channel_credentials,
             insecure,

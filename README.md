@@ -1,0 +1,1 @@
+Command to create grpc files: `python -m grpc_tools.protoc -IProtos --python_out=./Protos/ --grpc_python_out=Protos/. Protos/enums.proto Protos/basics.proto Protos/main.proto`
