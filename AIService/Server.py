@@ -1,14 +1,22 @@
 from threading import Lock
-from typing import Dict, List, Type
+from typing import List
 import grpc
 from concurrent import futures
+
 from Protos import main_pb2_grpc, main_pb2
 from AIService.base_ai import BaseAI
+from ScriptsOfTribute.board import build_game_state
+from ScriptsOfTribute.move import from_proto_move
+from ScriptsOfTribute.enums import PatronId
 
 class AIService(main_pb2_grpc.AIServiceServicer):
     def __init__(self, ai: BaseAI, server_instance):
         self.ai = ai
         self.server_instance = server_instance
+        self.engine_service_stub = None
+
+    def set_engine_service_stub(self, stub):
+        self.engine_service_stub = stub
 
     def RegisterBot(self, request, context):
         return main_pb2.RegistrationStatus(name=self.ai.bot_name, message="")
@@ -18,18 +26,21 @@ class AIService(main_pb2_grpc.AIServiceServicer):
         return main_pb2.Empty()
 
     def SelectPatron(self, request, context):
-        patron = self.ai.select_patron(request.availablePatrons)
-        return main_pb2.PatronIdMessage(patronId=patron)
+        patrons = [PatronId(patron) for patron in request.availablePatrons]
+        patron = self.ai.select_patron(patrons)
+        return main_pb2.PatronIdMessage(patronId=patron.value)
 
     def Play(self, request, context):
-        import pdb; pdb.set_trace()
-        move = self.ai.play(request.gameState, request.possibleMoves)
-        return move
+        game_state = build_game_state(request.gameState, self.engine_service_stub)
+        # game_state.debug_print()
+        moves = [from_proto_move(proto_move) for proto_move in request.possibleMoves]
+        move = self.ai.play(game_state, moves)
+        return move.to_proto()
 
     def GameEnd(self, request, context):
         self.ai.game_end(request)
         return main_pb2.Empty()
-    
+
     def CloseServer(self, request, context):
         print("Received CloseServer request. Shutting down server...")
         self.server_instance.bot_disconnected()
@@ -75,7 +86,15 @@ class Server:
         self.server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
         for i, ai in enumerate(ai_instances):
             self.add_bot()
-            main_pb2_grpc.add_AIServiceServicer_to_server(AIService(ai, self), self.server)
-            self.server.add_insecure_port(f"[::]:{port+i}")
+            ai_service = AIService(ai, self)
+            assigned_port = port + i
+            self.server.add_insecure_port(f"localhost:{assigned_port}")
+            engine_service_channel = grpc.insecure_channel(f"localhost:{assigned_port}")
+            engine_service_stub = main_pb2_grpc.EngineServiceStub(engine_service_channel)
+            if debug_prints:
+                print(f"Bot {ai.bot_name} listening on localhost:{assigned_port}")
+            ai_service.set_engine_service_stub(engine_service_stub)
+
+            main_pb2_grpc.add_AIServiceServicer_to_server(ai_service, self.server)
         self.server.start()
         return self.server

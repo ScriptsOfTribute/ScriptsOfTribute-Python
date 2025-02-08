@@ -3,8 +3,8 @@
 import grpc
 import warnings
 
-import basics_pb2 as basics__pb2
-import main_pb2 as main__pb2
+import Protos.basics_pb2 as basics__pb2
+import Protos.main_pb2 as main__pb2
 
 GRPC_GENERATED_VERSION = '1.68.0'
 GRPC_VERSION = grpc.__version__
