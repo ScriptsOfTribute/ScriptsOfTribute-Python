@@ -125,6 +125,7 @@ class GameState:
             completed_actions: List[str],
             tavern_cards: List[UniqueCard],
             pending_choice: Choice | None,
+            end_game_state: EndGameState,
             engine_service_stub: EngineServiceStub
         ):
         self.state_id = state_id
@@ -138,6 +139,7 @@ class GameState:
         self.completed_actions = completed_actions
         self.tavern_cards = tavern_cards
         self.pending_choice = pending_choice
+        self.end_game_state = end_game_state
 
         self._engine_service_stub = engine_service_stub
 
@@ -291,6 +293,7 @@ class SeededGameState(GameState):
             completed_actions: List[str],
             tavern_cards: List[UniqueCard],
             pending_choice: Choice,
+            end_game_state: EndGameState,
             InitialSeed: int,
             CurrentSeed: int,
             engine_service_stub: EngineServiceStub,
@@ -307,6 +310,7 @@ class SeededGameState(GameState):
             completed_actions,
             tavern_cards,
             pending_choice,
+            end_game_state,
             engine_service_stub
         )
         self.InitialSeed = InitialSeed
@@ -388,6 +392,9 @@ def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub) -> Gam
             played=[convert_unique_card(card) for card in enemy_proto.played],
             cooldown_pile=[convert_unique_card(card) for card in enemy_proto.cooldown_pile]
         )
+    
+    def convert_end_game_state(end_game_state: basics_pb2.EndGameState) -> EndGameState:
+        return EndGameState(end_game_state.winner, end_game_state.reason, end_game_state.additional_context)
 
     return GameState(
         state_id=proto.state_id,
@@ -401,6 +408,7 @@ def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub) -> Gam
         completed_actions=list(proto.completed_actions),
         tavern_cards=[convert_unique_card(card) for card in proto.tavern_cards],
         pending_choice=convert_choice(proto.pending_choice),
+        end_game_state=convert_end_game_state(proto.end_game_state),
         engine_service_stub=engine_service_stub
     )
 

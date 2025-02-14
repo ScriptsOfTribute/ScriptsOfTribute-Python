@@ -51,29 +51,17 @@ class AIService(main_pb2_grpc.AIServiceServicer):
 
 class Server:
 
-    _instance = None
-    _lock = Lock()
-
-    def __new__(cls, *args, **kwargs):
-        with cls._lock:
-            if not cls._instance:
-                cls._instance = super().__new__(cls)
-                cls._instance.active_bots = 0
-                cls._instance.server = None
-                cls._instance.lock = Lock()
-        return cls._instance
-
+    def __init__(self):
+        self.active_bots = 0
     def add_bot(self):
-        with self.lock:
-            self.active_bots += 1
-            print(f"Bot connected. Active bots: {self.active_bots}")
+        self.active_bots += 1
+        print(f"Bot connected. Active bots: {self.active_bots}")
 
     def bot_disconnected(self):
-        with self.lock:
-            self.active_bots -= 1
-            print(f"Bot disconnected. Active bots: {self.active_bots}")
-            if self.active_bots == 0:
-                self.shutdown_server()
+        self.active_bots -= 1
+        print(f"Bot disconnected. Active bots: {self.active_bots}")
+        if self.active_bots == 0:
+            self.shutdown_server()
 
     def shutdown_server(self):
         if self.server:

@@ -9,7 +9,7 @@ class RandomBot(BaseAI):
         return random.choice(available_patrons)
     
     def play(self, game_state, possible_moves):
-        game_state.debug_print()
+        # game_state.debug_print()
         return random.choice(possible_moves)
     
     def game_end(self, final_state):

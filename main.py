@@ -11,7 +11,13 @@ def main():
     #game.register_bot(bot1)
     game.register_bot(bot2)
     
-    game.run("RandomBot", "MaxPrestigeBot", start_game_runner=False, runs=5)
+    game.run(
+        "RandomBot",
+        "MaxPrestigeBot",
+        start_game_runner=False,
+        runs=10,
+        threads=2,
+    )
 
 if __name__ == "__main__":
     main()
