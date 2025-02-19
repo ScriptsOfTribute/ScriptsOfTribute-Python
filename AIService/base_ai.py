@@ -14,7 +14,7 @@ class BaseAI:
     def select_patron(self, available_patrons: List[PatronId]):
         raise NotImplementedError
 
-    def play(self, game_state: GameState, possible_moves: List[BasicMove]) -> BasicMove:
+    def play(self, game_state: GameState, possible_moves: List[BasicMove], remaining_time: int) -> BasicMove:
         raise NotImplementedError
 
     def game_end(self, final_state):

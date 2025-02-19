@@ -1,39 +1,105 @@
+import atexit
+import multiprocessing
+
+import os
+import signal
+import time
 from typing import List
 from AIService.base_ai import BaseAI
 from Game.runner import run_game_runner
-from AIService.Server import Server
+from AIService.Server import run_grpc_server
 
 class Game:
     def __init__(self):
         self.bots: List[BaseAI] = []
+        self.processes: List[multiprocessing.Process] = []
+
+        atexit.register(self._cleanup_processes)
 
     def register_bot(self, bot_instance: BaseAI):
+        # We register bots here, because some run invokes might involve C# native bots, so we always pass str there
         self.bots.append(bot_instance)
 
-    def run(self, bot1Name: str, bot2Name: str, start_game_runner=True, runs=1, threads=1, enable_logs="NONE", log_destination="", seed=None, timeout=30):
-        bots = filter(lambda bot: bot.bot_name == bot1Name or bot.bot_name == bot2Name, self.bots)
+    def run(
+        self,
+        bot1Name: str,
+        bot2Name: str,
+        start_game_runner=True,
+        runs=1,
+        threads=1,
+        enable_logs="NONE",
+        log_destination="",
+        seed=None,
+        timeout=30,
+        base_client_port=50000,
+        base_server_port=49000
+    ):
+        bot1 = next((bot for bot in self.bots if bot.bot_name == bot1Name), None)
+        bot2 = next((bot for bot in self.bots if bot.bot_name == bot2Name), None)
+        self.processes = []
+        if bot1 is not None or bot2 is not None:
+            self.processes.extend(self._run_bot_instances(bot1, bot2, threads, base_client_port, base_server_port))
         if start_game_runner:
+            time.sleep(2) # give servers some time to start
             if any([bot1Name == bot.bot_name for bot in self.bots]):
                 bot1Name = "grpc:" + bot1Name
             if any([bot2Name == bot.bot_name for bot in self.bots]):
                 bot2Name = "grpc:" + bot2Name
-            run_game_runner(
-                bot1Name,
-                bot2Name, 
-                runs=runs,
-                threads=threads,
-                enable_logs=enable_logs,
-                log_destination=log_destination,
-                seed=seed,
-                timeout=timeout
+            game_runner_process = multiprocessing.Process(
+                target=run_game_runner,
+                name='GameRunner',
+                args=(bot1Name, bot2Name, runs, threads, enable_logs, log_destination, seed, timeout),
+                daemon=True
             )
-
-    def _run_bot_instances(self, bots: List[BaseAI]):
-        server = Server()
-        grpc_server = server.run_grpc_server(bots)
-
+            game_runner_process.start()
+            self.processes.append(game_runner_process)
         try:
-            grpc_server.wait_for_termination()
+            for p in self.processes:
+                p.join()  # Wait for all processes to finish
+                print(f'Finished {p.name}')
         except KeyboardInterrupt:
-            grpc_server.close()
             print("Server interrupted by user.")
+            for p in self.processes:
+                p.terminate()  # Terminate all processes on interruption
+
+    def _run_bot_instances(
+        self,
+        bot1: BaseAI | None,
+        bot2: BaseAI | None,
+        num_threads: int,
+        base_client_port: int,
+        base_server_port: int,
+    ):
+        processes = []
+        for i in range(num_threads):
+            client_port1 = base_client_port + i
+            server_port1 = base_server_port + i
+            client_port2 = base_client_port + num_threads + i
+            server_port2 = base_server_port + num_threads + i
+
+            p = multiprocessing.Process(
+                target=run_grpc_server,
+                name=f"{bot1.bot_name if bot1 else 'C# bot'} - {bot2.bot_name if bot2 else 'C# bot'} on {(client_port1, client_port2)}, {(server_port1, server_port2)}",
+                args=(bot1, bot2, (client_port1, client_port2), (server_port1, server_port2)),
+                #daemon=True
+            )
+            p.start()
+            processes.append(p)
+
+        return processes
+
+
+    def _cleanup_processes(self):
+        print("Cleaning up all processes...")
+
+        for p in self.processes:
+            if p.is_alive():
+                print(f"Terminating {p.name} (PID {p.pid})")
+                p.terminate()
+                p.join(timeout=5)
+                
+                if p.is_alive():
+                    print(f"Forcing kill on {p.name} (PID {p.pid})")
+                    os.kill(p.pid, signal.SIGKILL)
+
+        self.processes.clear()

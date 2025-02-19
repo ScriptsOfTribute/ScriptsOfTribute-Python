@@ -22,7 +22,7 @@ def run_game_runner(bot1: str, bot2: str, runs=1, threads=1, enable_logs="NONE",
     if seed:
         args += ["-s", str(seed)]
     args += ["-to", str(timeout)]
-    
+    print(f'Running: {args}')
     try:
         result = subprocess.run(
             args,

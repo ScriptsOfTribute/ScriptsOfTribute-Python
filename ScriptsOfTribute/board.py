@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 
 from Protos import basics_pb2, main_pb2
 from Protos.main_pb2_grpc import EngineServiceStub
-from Protos.main_pb2 import ApplyMoveRequest, SimulationResult
+from Protos.main_pb2 import ApplyMoveRequest, SimulationResult, StateId
 from ScriptsOfTribute.enums import BoardState, CardType, ChoiceDataType, PatronId, PlayerEnum
 from ScriptsOfTribute.move import BasicMove, from_proto_move
 
@@ -58,10 +58,6 @@ class CardOptions:
 class EffectOptions:
     def __init__(self, possible_effects: List[str]):
         self.possible_effects = possible_effects
-
-class StateId:
-    def __init__(self, id: str):
-        self.id = id
 
 class CurrentPlayer:
     def __init__(
@@ -148,6 +144,7 @@ class GameState:
 
         if seed is None:
             seed = int(random.random() * 1e18)
+
         request = ApplyMoveRequest(
             state_id=self.state_id,
             move=proto_move,
@@ -317,7 +314,7 @@ class SeededGameState(GameState):
         self.CurrentSeed = CurrentSeed
 
 
-def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub) -> GameState:
+def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub, seeded=False) -> GameState:
     def convert_unique_card(card_proto: basics_pb2.UniqueCardProto) -> UniqueCard:
         return UniqueCard(
             name=card_proto.name,
@@ -394,7 +391,9 @@ def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub) -> Gam
         )
     
     def convert_end_game_state(end_game_state: basics_pb2.EndGameState) -> EndGameState:
-        return EndGameState(end_game_state.winner, end_game_state.reason, end_game_state.additional_context)
+        if end_game_state == basics_pb2.EndGameState():
+            return None
+        return EndGameState(end_game_state.winner, end_game_state.reason, end_game_state.AdditionalContext)
 
     return GameState(
         state_id=proto.state_id,
@@ -404,7 +403,7 @@ def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub) -> Gam
         upcoming_effects=list(proto.upcoming_effects),
         start_of_next_turn_effects=list(proto.start_of_next_turn_effects),
         current_player=convert_player(proto.current_player),
-        enemy_player=convert_enemy_player(proto.enemy_player),
+        enemy_player=convert_enemy_player(proto.enemy_player) if not seeded else convert_player(proto.enemy_player),
         completed_actions=list(proto.completed_actions),
         tavern_cards=[convert_unique_card(card) for card in proto.tavern_cards],
         pending_choice=convert_choice(proto.pending_choice),
@@ -413,7 +412,7 @@ def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub) -> Gam
     )
 
 def build_seeded_game_state(proto: main_pb2.SeededGameStateProto, engine_service_stub) -> SeededGameState:
-    base_game_state = build_game_state(proto)
+    base_game_state = build_game_state(proto, engine_service_stub, seeded=True)
     return SeededGameState(
         state_id=proto.state_id,
         patron_states=base_game_state.patron_states,
@@ -426,6 +425,7 @@ def build_seeded_game_state(proto: main_pb2.SeededGameStateProto, engine_service
         completed_actions=base_game_state.completed_actions,
         tavern_cards=base_game_state.tavern_cards,
         pending_choice=base_game_state.pending_choice,
+        end_game_state=base_game_state.end_game_state,
         InitialSeed=proto.InitialSeed,
         CurrentSeed=proto.CurrentSeed,
         engine_service_stub=engine_service_stub
