@@ -1,17 +1,34 @@
 import random
 from typing import Dict, List, Union
 
-from Protos import basics_pb2, main_pb2
-from Protos.main_pb2_grpc import EngineServiceStub
-from Protos.main_pb2 import ApplyMoveRequest, SimulationResult, StateId
+from ScriptsOfTribute.Protos import basics_pb2, main_pb2
+from ScriptsOfTribute.Protos.main_pb2_grpc import EngineServiceStub
+from ScriptsOfTribute.Protos.main_pb2 import ApplyMoveRequest, SimulationResult
 from ScriptsOfTribute.enums import BoardState, CardType, ChoiceDataType, PatronId, PlayerEnum
 from ScriptsOfTribute.move import BasicMove, from_proto_move
 
 class PatronStates:
+    """Represents the states of patrons in the game.
+
+    Attributes:
+        patrons (Dict[PatronId, PlayerEnum]): A dictionary mapping patron IDs to the player they are favored towards.
+    """
     def __init__(self, patrons: Dict[PatronId, PlayerEnum]):
         self.patrons = patrons
 
 class UniqueCard:
+    """Represents a unique card in the game.
+
+    Attributes:
+        name (str): The name of the card.
+        deck (PatronId): The patron deck this card belongs to.
+        cost (int): The cost of the card.
+        type (CardType): The type of the card (e.g., AGENT, ACTION).
+        hp (int): The health points of the card (-1 for non-agents).
+        taunt (bool): Whether the card has the taunt ability.
+        unique_id (int): A unique identifier for the card.
+        effects (List[str]): A list of effects associated with the card. 0th index is effect invoked on play, the following indices indicate the effects concerning the respective combo.
+    """
     def __init__(self, name: str, deck: PatronId, cost: int, type: CardType, hp: int, taunt: bool, unique_id: int, effects: List[str]):
         self.name = name
         self.deck = deck
@@ -23,18 +40,42 @@ class UniqueCard:
         self.effects = effects
 
 class SerializedAgent:
+    """Represents an agent card in the game.
+
+    Attributes:
+        currentHP (int): The current health points of the agent.
+        representing_card (UniqueCard): The card this agent represents.
+        activated (bool): Whether the agent is activated.
+    """
     def __init__(self, currentHP: int, representing_card: UniqueCard, activated: bool):
         self.currentHP = currentHP
         self.representing_card = representing_card
         self.activated = activated
 
 class EndGameState:
+    """Represents the state of the game when it ends.
+
+    Attributes:
+        winner (str): The winner of the game.
+        reason (str): The reason the game ended.
+        AdditionalContext (str): Additional context about the end game state.
+    """
     def __init__(self, winner: str, reason: str, AdditionalContext: str):
         self.winner = winner
         self.reason = reason
         self.AdditionalContext = AdditionalContext
 
 class Choice:
+    """Represents a choice presented to the player during the game.
+
+    Attributes:
+        max_choices (int): The maximum number of choices the player can make.
+        min_choices (int): The minimum number of choices the player must make.
+        context (str): The context of the choice.
+        choice_follow_up (str): The follow-up action after the choice is made.
+        type (ChoiceDataType): The type of choice (e.g., card, effect).
+        possible_options (Union[CardOptions, EffectOptions]): The available options for the choice. Only one type.
+    """
     def __init__(
             self,
             max_choices: int,
@@ -52,14 +93,39 @@ class Choice:
         self.possible_options = possible_options
 
 class CardOptions:
+    """Represents a set of card options for a choice.
+
+    Attributes:
+        possible_cards (List[UniqueCard]): A list of unique cards available as options.
+    """
     def __init__(self, possible_cards: List[UniqueCard]):
         self.possible_cards = possible_cards
 
 class EffectOptions:
+    """Represents a set of effect options for a choice.
+
+    Attributes:
+        possible_effects (List[str]): A list of effects available as options.
+    """
     def __init__(self, possible_effects: List[str]):
         self.possible_effects = possible_effects
 
 class CurrentPlayer:
+    """Represents the current player's state in the game.
+
+    Attributes:
+        player_id (PlayerEnum): The ID of the current player.
+        hand (List[UniqueCard]): The cards in the player's hand.
+        cooldown_pile (List[UniqueCard]): The cards in the player's cooldown pile.
+        played (List[UniqueCard]): The cards the player has played this turn.
+        known_upcoming_draws (List[UniqueCard]): The cards the player knows they will draw.
+        agents (List[SerializedAgent]): The agents the player has on the board.
+        power (int): The player's current power.
+        patron_calls (int): The number of patron calls the player can make this turn.
+        coins (int): The player's current coins.
+        prestige (int): The player's current prestige.
+        draw_pile (List[UniqueCard]): The cards in the player's draw pile.
+    """
     def __init__(
             self, 
             player_id: PlayerEnum,
@@ -87,6 +153,18 @@ class CurrentPlayer:
         self.draw_pile = draw_pile
 
 class EnemyPlayer:
+    """Represents the enemy player's state in the game.
+
+    Attributes:
+        player_id (PlayerEnum): The ID of the enemy player.
+        agents (List[SerializedAgent]): The agents the enemy player has on the board.
+        power (int): The enemy player's current power.
+        coins (int): The enemy player's current coins.
+        prestige (int): The enemy player's current prestige.
+        hand_and_draw (List[UniqueCard]): The cards in the enemy player's hand and draw pile.
+        played (List[UniqueCard]): The cards the enemy player has played.
+        cooldown_pile (List[UniqueCard]): The cards in the enemy player's cooldown pile.
+    """
     def __init__(
             self,
             player_id: PlayerEnum,
@@ -108,6 +186,28 @@ class EnemyPlayer:
         self.cooldown_pile = cooldown_pile
 
 class GameState:
+    """Represents the state of the game at a given point.
+
+    Attributes:
+        state_id (str): A unique identifier for the game state.
+        patron_states (PatronStates): The states of the patrons.
+        tavern_available_cards (List[UniqueCard]): The cards available in the tavern.
+        board_state (BoardState): The current state of the board.
+        upcoming_effects (List[str]): Effects that will trigger soon.
+        start_of_next_turn_effects (List[str]): Effects that will trigger at the start of the next turn.
+        current_player (CurrentPlayer): The current player's state.
+        enemy_player (EnemyPlayer): The enemy player's state.
+        completed_actions (List[str]): Actions that have been completed.
+        tavern_cards (List[UniqueCard]): The cards in the tavern.
+        pending_choice (Choice | None): The current choice the player must make, if any.
+        end_game_state (EndGameState): The state of the game if it has ended.
+
+    Methods:
+        apply_move(move: BasicMove, seed: int = None) -> tuple['SeededGameState', List[BasicMove]]:
+            Applies a move to the game state and returns the updated state and possible moves.
+        debug_print(indent: int = 0) -> None:
+            Prints a formatted representation of the game state for debugging.
+    """
     def __init__(
             self,
             state_id: str, 
@@ -140,6 +240,15 @@ class GameState:
         self._engine_service_stub = engine_service_stub
 
     def apply_move(self, move: BasicMove, seed: int=None) -> tuple['SeededGameState', List[BasicMove]]:
+        """Applies a move to the game state and returns the updated state and possible moves.
+
+        Args:
+            move (BasicMove): The move to apply.
+            seed (int, optional): A seed for random number generation. Defaults to a random seed.
+
+        Returns:
+            tuple[SeededGameState, List[BasicMove]]: The updated game state and a list of possible moves.
+        """
         proto_move = move.to_proto()
 
         if seed is None:
@@ -277,6 +386,31 @@ class GameState:
                 print(f"{indent_str}      {effect}")
 
 class SeededGameState(GameState):
+    """
+    Represents the simulated state of the game with given seed.
+
+    Attributes:
+        state_id (str): A unique identifier for the game state.
+        patron_states (PatronStates): The states of the patrons.
+        tavern_available_cards (List[UniqueCard]): The cards available in the tavern.
+        board_state (BoardState): The current state of the board.
+        upcoming_effects (List[str]): Effects that will trigger soon.
+        start_of_next_turn_effects (List[str]): Effects that will trigger at the start of the next turn.
+        current_player (CurrentPlayer): The current player's state.
+        enemy_player (EnemyPlayer): The enemy player's state.
+        completed_actions (List[str]): Actions that have been completed.
+        tavern_cards (List[UniqueCard]): The cards in the tavern.
+        pending_choice (Choice | None): The current choice the player must make, if any.
+        end_game_state (EndGameState): The state of the game if it has ended.
+        initial_seed (int): Initial seed the GameState was simulated with.
+        current_seed (int): Current seed of this object.
+
+    Methods:
+        apply_move(move: BasicMove, seed: int = None) -> tuple['SeededGameState', List[BasicMove]]:
+            Applies a move to the game state and returns the updated state and possible moves.
+        debug_print(indent: int = 0) -> None:
+            Prints a formatted representation of the game state for debugging.
+    """
     def __init__(
             self, 
             state_id: str,
@@ -291,8 +425,8 @@ class SeededGameState(GameState):
             tavern_cards: List[UniqueCard],
             pending_choice: Choice,
             end_game_state: EndGameState,
-            InitialSeed: int,
-            CurrentSeed: int,
+            initial_seed: int,
+            current_seed: int,
             engine_service_stub: EngineServiceStub,
         ):
         super().__init__(
@@ -310,8 +444,8 @@ class SeededGameState(GameState):
             end_game_state,
             engine_service_stub
         )
-        self.InitialSeed = InitialSeed
-        self.CurrentSeed = CurrentSeed
+        self.initial_seed = initial_seed
+        self.current_seed = current_seed
 
 
 def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub, seeded=False) -> GameState:
@@ -426,7 +560,7 @@ def build_seeded_game_state(proto: main_pb2.SeededGameStateProto, engine_service
         tavern_cards=base_game_state.tavern_cards,
         pending_choice=base_game_state.pending_choice,
         end_game_state=base_game_state.end_game_state,
-        InitialSeed=proto.InitialSeed,
-        CurrentSeed=proto.CurrentSeed,
+        initial_seed=proto.InitialSeed,
+        current_seed=proto.CurrentSeed,
         engine_service_stub=engine_service_stub
     )
