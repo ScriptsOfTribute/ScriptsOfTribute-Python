@@ -3,8 +3,8 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "scripts-of-tribute"
-version = "1.0.0"
+name = "ScriptsOfTribute"
+version = "1.0.1"
 authors = [
     { name="Ematerasu", email="tot.thesis.project@gmail.com" },
 ]
