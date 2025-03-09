@@ -1,11 +1,11 @@
 import random
 from typing import Dict, List, Union
 
-from ScriptsOfTribute.Protos import basics_pb2, main_pb2
-from ScriptsOfTribute.Protos.main_pb2_grpc import EngineServiceStub
-from ScriptsOfTribute.Protos.main_pb2 import ApplyMoveRequest, SimulationResult
-from ScriptsOfTribute.enums import BoardState, CardType, ChoiceDataType, PatronId, PlayerEnum
-from ScriptsOfTribute.move import BasicMove, from_proto_move
+from scripts_of_tribute.protos import basics_pb2, main_pb2
+from scripts_of_tribute.protos.main_pb2_grpc import EngineServiceStub
+from scripts_of_tribute.protos.main_pb2 import ApplyMoveRequest, SimulationResult
+from scripts_of_tribute.enums import BoardState, CardType, ChoiceDataType, PatronId, PlayerEnum
+from scripts_of_tribute.move import BasicMove, from_proto_move
 
 class PatronStates:
     """Represents the states of patrons in the game.

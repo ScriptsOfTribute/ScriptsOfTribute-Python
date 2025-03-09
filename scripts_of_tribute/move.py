@@ -1,8 +1,8 @@
 from typing import List, Union
 
-from ScriptsOfTribute.Protos import basics_pb2
-from ScriptsOfTribute.Protos.basics_pb2 import BasicMove as ProtoBasicMove, Move
-from ScriptsOfTribute.enums import MoveEnum, PatronId
+from scripts_of_tribute.protos import basics_pb2
+from scripts_of_tribute.protos.basics_pb2 import BasicMove as ProtoBasicMove, Move
+from scripts_of_tribute.enums import MoveEnum, PatronId
 
 class BasicMove:
     def __init__(self, move_id: int, command: MoveEnum):

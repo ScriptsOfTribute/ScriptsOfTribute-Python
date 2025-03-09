@@ -2,8 +2,8 @@ name: Publish Python Package
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
   build-and-publish:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.10'
 
       - name: Install build tools
         run: |
@@ -34,23 +34,27 @@ jobs:
         run: |
           python -m twine upload dist/*
 
+      - name: Create ZIP archive
+        run: |
+          zip -r ScriptsOfTribute.zip . -x '.git/*'
+          echo "ZIP created: ScriptsOfTribute.zip"
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}  # Use the commit SHA as the release tag
-          release_name: Release ${{ github.sha }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
 
-      - name: Upload package to GitHub Release
+      - name: Upload ZIP to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/*.tar.gz
-          asset_name: package.tar.gz
-          asset_content_type: application/gzip
+          asset_path: ./ScriptsOfTribute.zip
+          asset_name: ScriptsOfTribute.zip
+          asset_content_type: application/zip

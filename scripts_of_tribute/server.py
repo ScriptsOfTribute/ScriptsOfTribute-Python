@@ -2,11 +2,11 @@ from typing import Tuple
 import grpc
 from concurrent import futures
 
-from ScriptsOfTribute.Protos import main_pb2_grpc, main_pb2
-from ScriptsOfTribute.base_ai import BaseAI
-from ScriptsOfTribute.board import build_game_state
-from ScriptsOfTribute.move import from_proto_move
-from ScriptsOfTribute.enums import PatronId
+from scripts_of_tribute.protos import main_pb2_grpc, main_pb2
+from scripts_of_tribute.base_ai import BaseAI
+from scripts_of_tribute.board import build_game_state
+from scripts_of_tribute.move import from_proto_move
+from scripts_of_tribute.enums import PatronId
 
 class AIService(main_pb2_grpc.AIServiceServicer):
     def __init__(self, ai: BaseAI, server_instance, engine_service_port:int):

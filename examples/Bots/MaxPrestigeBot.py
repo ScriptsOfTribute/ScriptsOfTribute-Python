@@ -1,7 +1,7 @@
 import random
 
-from ScriptsOfTribute.base_ai import BaseAI
-from ScriptsOfTribute.enums import PlayerEnum, MoveEnum
+from scripts_of_tribute.base_ai import BaseAI
+from scripts_of_tribute.enums import PlayerEnum, MoveEnum
 
 class MaxPrestigeBot(BaseAI):
 

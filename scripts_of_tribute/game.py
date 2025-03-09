@@ -10,9 +10,9 @@ from pathlib import Path
 import signal
 import time
 from typing import List
-from ScriptsOfTribute.base_ai import BaseAI
-from ScriptsOfTribute.runner import run_game_runner
-from ScriptsOfTribute.Server import run_grpc_server
+from scripts_of_tribute.base_ai import BaseAI
+from scripts_of_tribute.runner import run_game_runner
+from scripts_of_tribute.server import run_grpc_server
 
 class Game:
     def __init__(self):

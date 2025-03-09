@@ -1,8 +1,8 @@
 from typing import List
 
-from ScriptsOfTribute.board import GameState
-from ScriptsOfTribute.enums import PatronId
-from ScriptsOfTribute.move import BasicMove
+from scripts_of_tribute.board import GameState
+from scripts_of_tribute.enums import PatronId
+from scripts_of_tribute.move import BasicMove
 
 class BaseAI:
     def __init__(self, bot_name):

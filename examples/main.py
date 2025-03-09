@@ -1,6 +1,6 @@
-from Bots.RandomBot import RandomBot
-from Bots.MaxPrestigeBot import MaxPrestigeBot
-from ScriptsOfTribute.game import Game
+from bots.RandomBot import RandomBot
+from bots.MaxPrestigeBot import MaxPrestigeBot
+from scripts_of_tribute.game import Game
 
 
 def main():
