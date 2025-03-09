@@ -22,7 +22,7 @@ The **Scripts of Tribute** Python library is a wrapper for creating AI bots to c
 To install the library, use `pip`:
 
 ```bash
-pip install ScriptsOfTribute
+pip install scripts-of-tribute
 ```
 
 ## Getting Started
