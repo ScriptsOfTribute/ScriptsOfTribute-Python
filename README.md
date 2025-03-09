@@ -26,13 +26,6 @@ pip install scripts-of-tribute
 ```
 
 ## Getting Started
-### Generating Grpc Files
-The library uses gRPC for communication with the C# .NET engine. The `.proto` files are located in the `ScriptsOfTribute/Protos` folder. To generate the necessary Python files, run:
-```bash
-python -m grpc_tools.protoc -IProtos --python_out=./Protos/ --grpc_python_out=Protos/. Protos/enums.proto Protos/basics.proto Protos/main.proto
-```
-This will generate the required gRPC Python files in the `Protos` folder.
-
 ### Creating your bot
 To create your own bot, you need to inherit from the `ScriptsOfTribute.base_ai.BaseAI` class and implement the required methods:
 ```python
@@ -140,6 +133,14 @@ if __name__ == "__main__":
     main()
 ```
 This code is available in the `examples` directory, as well with the example bots.
+
+## Contributing
+if you would like to work with the code locally you might need to (re)generate `protobuf` files.
+The library uses gRPC for communication with the C# .NET engine. The `.proto` files are located in the `ScriptsOfTribute/Protos` folder. To generate the necessary Python files, run:
+```bash
+python -m grpc_tools.protoc -IProtos --python_out=./Protos/ --grpc_python_out=Protos/. Protos/enums.proto Protos/basics.proto Protos/main.proto
+```
+This will generate the required gRPC Python files in the `Protos` folder.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
