@@ -106,3 +106,5 @@ venv.bak/
 # IDE-specific files
 .vscode/
 .idea/
+
+examples/logs

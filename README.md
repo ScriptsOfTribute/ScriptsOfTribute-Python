@@ -27,7 +27,7 @@ pip install scripts-of-tribute
 
 ## Getting Started
 ### Creating your bot
-To create your own bot, you need to inherit from the `ScriptsOfTribute.base_ai.BaseAI` class and implement the required methods:
+To create your own bot, you need to inherit from the `scripts_of_tribute.base_ai.BaseAI` class and implement the required methods:
 ```python
 def pregame_prepare(self):
         """Optional: Prepare your bot before the game starts."""
@@ -49,7 +49,7 @@ def game_end(self, final_state):
 What's important here in the `play` method that bot should return `BasicMove` object from the list, it is because `Move` objects come from the engine with an Identification number `move_id` which is used to quickly identify whether move is legal or not.
 
 ### Running the game
-The `ScriptsOfTribute.game.Game` class is used to register and run your bots. Here's how to use it:
+The `scripts_of_tribute.game.Game` class is used to register and run your bots. Here's how to use it:
 ```python
 from ScriptsOfTribute.game import Game
 from Bots.RandomBot import RandomBot
@@ -136,11 +136,11 @@ This code is available in the `examples` directory, as well with the example bot
 
 ## Contributing
 if you would like to work with the code locally you might need to (re)generate `protobuf` files.
-The library uses gRPC for communication with the C# .NET engine. The `.proto` files are located in the `ScriptsOfTribute/Protos` folder. To generate the necessary Python files, run:
+The library uses gRPC for communication with the C# .NET engine. The `.proto` files are located in the `scripts_of_tribute/protos` folder. To generate the necessary Python files, run:
 ```bash
-python -m grpc_tools.protoc -IProtos --python_out=./Protos/ --grpc_python_out=Protos/. Protos/enums.proto Protos/basics.proto Protos/main.proto
+python -m grpc_tools.protoc -Iprotos --python_out=./protos/ --grpc_python_out=protos/. protos/enums.proto protos/basics.proto protos/main.proto
 ```
-This will generate the required gRPC Python files in the `Protos` folder.
+This will generate the required gRPC Python files in the `protos` folder.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

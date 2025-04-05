@@ -4,7 +4,7 @@ from concurrent import futures
 
 from scripts_of_tribute.protos import main_pb2_grpc, main_pb2
 from scripts_of_tribute.base_ai import BaseAI
-from scripts_of_tribute.board import build_game_state
+from scripts_of_tribute.board import EndGameState, build_game_state
 from scripts_of_tribute.move import from_proto_move
 from scripts_of_tribute.enums import PatronId
 
@@ -37,7 +37,9 @@ class AIService(main_pb2_grpc.AIServiceServicer):
         return move
 
     def GameEnd(self, request, context):
-        self.ai.game_end(request)
+        end_state = EndGameState(request.state.winner, request.state.reason, request.state.AdditionalContext)
+        game_state = build_game_state(request.finalBoardState, None)
+        self.ai.game_end(end_state, game_state)
         return main_pb2.Empty()
 
     def CloseServer(self, request, context):
