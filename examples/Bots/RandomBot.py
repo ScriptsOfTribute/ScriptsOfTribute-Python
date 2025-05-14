@@ -11,5 +11,5 @@ class RandomBot(BaseAI):
         pick = random.choice(possible_moves)
         return pick
     
-    def game_end(self, final_state):
+    def game_end(self, end_game_state, final_state):
         pass

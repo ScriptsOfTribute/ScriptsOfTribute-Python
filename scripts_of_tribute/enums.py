@@ -10,6 +10,7 @@ class PatronId(Enum):
     PELIN = 6
     RED_EAGLE = 7
     TREASURY = 8
+    SAINT_ALESSIA = 9
 
     @classmethod
     def from_string(cls, patron_str: str) -> 'PatronId':

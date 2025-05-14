@@ -1,6 +1,6 @@
 from typing import List
 
-from scripts_of_tribute.board import GameState
+from scripts_of_tribute.board import GameState, EndGameState
 from scripts_of_tribute.enums import PatronId
 from scripts_of_tribute.move import BasicMove
 
@@ -17,5 +17,5 @@ class BaseAI:
     def play(self, game_state: GameState, possible_moves: List[BasicMove], remaining_time: int) -> BasicMove:
         raise NotImplementedError
 
-    def game_end(self, final_state):
+    def game_end(self, end_game_state: EndGameState, final_state: GameState):
         pass
