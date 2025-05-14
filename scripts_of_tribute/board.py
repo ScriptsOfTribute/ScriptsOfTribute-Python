@@ -110,11 +110,11 @@ class EffectOptions:
     def __init__(self, possible_effects: List[str]):
         self.possible_effects = possible_effects
 
-class Player:
-    """Represents the player's state in the game.
+class CurrentPlayer:
+    """Represents the current player's state in the game.
 
     Attributes:
-        player_id (PlayerEnum): The ID of the player.
+        player_id (PlayerEnum): The ID of the current player.
         hand (List[UniqueCard]): The cards in the player's hand.
         cooldown_pile (List[UniqueCard]): The cards in the player's cooldown pile.
         played (List[UniqueCard]): The cards the player has played this turn.
@@ -153,7 +153,7 @@ class Player:
         self.draw_pile = draw_pile
 
 class EnemyPlayer:
-    """Represents the enemy player's state in the game with hidden hand and draw.
+    """Represents the enemy player's state in the game.
 
     Attributes:
         player_id (PlayerEnum): The ID of the enemy player.
@@ -216,7 +216,7 @@ class GameState:
             board_state: BoardState,
             upcoming_effects: List[str],
             start_of_next_turn_effects: List[str],
-            current_player: Player,
+            current_player: CurrentPlayer,
             enemy_player: EnemyPlayer,
             completed_actions: List[str],
             tavern_cards: List[UniqueCard],
@@ -310,7 +310,7 @@ class GameState:
         print(f"{indent_str}  unique_id: {card.unique_id}")
         print(f"{indent_str}  effects: {card.effects}")
 
-    def _print_current_player(self, player: Player, indent: int) -> None:
+    def _print_current_player(self, player: CurrentPlayer, indent: int) -> None:
         indent_str = " " * indent
         print(f"{indent_str}CurrentPlayer:")
         print(f"{indent_str}  player_id: {player.player_id}")
@@ -419,8 +419,8 @@ class SeededGameState(GameState):
             board_state: BoardState,
             upcoming_effects: List[str],
             start_of_next_turn_effects: List[str],
-            current_player: Player,
-            enemy_player: Player, 
+            current_player: CurrentPlayer,
+            enemy_player: EnemyPlayer, 
             completed_actions: List[str],
             tavern_cards: List[UniqueCard],
             pending_choice: Choice,
@@ -497,8 +497,8 @@ def build_game_state(proto: main_pb2.GameStateProto, engine_service_stub, seeded
             possible_options=possible_options
         )
 
-    def convert_player(player_proto: basics_pb2.PlayerProto) -> Player:
-        return Player(
+    def convert_player(player_proto: basics_pb2.PlayerProto) -> CurrentPlayer:
+        return CurrentPlayer(
             player_id=PlayerEnum(player_proto.player_id),
             hand=[convert_unique_card(card) for card in player_proto.hand],
             cooldown_pile=[convert_unique_card(card) for card in player_proto.cooldown_pile],
