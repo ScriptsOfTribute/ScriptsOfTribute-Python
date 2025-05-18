@@ -115,7 +115,7 @@ class Game:
 
         self.processes.clear()
 
-    def _download_game_runner(self, version="v1.0.0"):
+    def _download_game_runner(self, version=None):
         system = platform.system()
         if system == "Windows":
             zip_name = f"GameRunner-win-x64.zip"
@@ -125,6 +125,13 @@ class Game:
             zip_name = f"GameRunner-osx-x64.zip"
         else:
             raise NotImplementedError(f"Unsupported platform: {system}")
+        
+        if version is None:
+            print("Fetching latest GameRunner version...")
+            response = requests.get("https://api.github.com/repos/ScriptsOfTribute/ScriptsOfTribute-Core/releases/latest")
+            response.raise_for_status()
+            version = response.json()["tag_name"]
+            print(f"Latest version: {version}")
 
         url = f"https://github.com/ScriptsOfTribute/ScriptsOfTribute-Core/releases/download/{version}/{zip_name}"
 
@@ -135,9 +142,8 @@ class Game:
 
         print(f"Downloading GameRunner from {url}...")
         response = requests.get(url)
-        response.raise_for_status()  # Raise an error for bad status codes
+        response.raise_for_status()
 
-        # Save the zip file
         with open(zip_path, "wb") as f:
             f.write(response.content)
 

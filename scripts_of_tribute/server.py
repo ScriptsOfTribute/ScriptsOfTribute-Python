@@ -1,3 +1,4 @@
+import time
 from typing import Tuple
 import grpc
 from concurrent import futures
@@ -43,10 +44,17 @@ class AIService(main_pb2_grpc.AIServiceServicer):
         return main_pb2.Empty()
 
     def CloseServer(self, request, context):
-        print("Received CloseServer request. Shutting down server...")
-        self.server_instance.bot_disconnected()
+        print(f"Received CloseServer request from {self.ai.bot_name}. Shutting down server...")
         context.set_code(grpc.StatusCode.OK)
         context.set_details(f"Bot {self.ai.bot_name}'s connection closed.")
+        def delayed_shutdown():
+            time.sleep(0.1)
+            self.server_instance.bot_disconnected()
+            print(f"Bot {self.ai.bot_name}'s connection closed.")
+
+        import threading
+        threading.Thread(target=delayed_shutdown, daemon=True).start()
+
         return main_pb2.Empty()
 
 
@@ -55,6 +63,7 @@ class Server:
     def __init__(self):
         self.active_bots = 0
         self.server = None
+
     def add_bot(self):
         self.active_bots += 1
 
@@ -99,6 +108,12 @@ def run_grpc_server(
         server2.server.start()
 
     if bot1 is not None:
-        server1.server.wait_for_termination()
+        try:
+            server1.server.wait_for_termination(timeout=2)
+        except grpc.FutureTimeoutError:
+            print("Server didn't terminate cleanly in time.")
     if bot2 is not None:
-        server2.server.wait_for_termination()
+        try:
+            server2.server.wait_for_termination(timeout=2)
+        except grpc.FutureTimeoutError:
+            print("Server didn't terminate cleanly in time.")
