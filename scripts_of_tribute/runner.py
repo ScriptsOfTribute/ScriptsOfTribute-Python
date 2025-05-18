@@ -21,6 +21,8 @@ def run_game_runner(path: Path, bot1: str, bot2: str, runs=1, threads=1, enable_
             cwd=str(path.parent)
         )
         print(f"{result.stdout}")
+        if result.stderr:
+            print(result.stderr)
     except subprocess.CalledProcessError as e:
         print(f"Error running GameRunner:\n{e.stderr}")
         raise RuntimeError(e)
