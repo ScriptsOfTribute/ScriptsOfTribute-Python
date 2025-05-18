@@ -113,4 +113,7 @@ def run_grpc_server(
         except grpc.FutureTimeoutError:
             print("Server didn't terminate cleanly in time.")
     if bot2 is not None:
-        server2.server.wait_for_termination()
+        try:
+            server2.server.wait_for_termination(timeout=2)
+        except grpc.FutureTimeoutError:
+            print("Server didn't terminate cleanly in time.")
