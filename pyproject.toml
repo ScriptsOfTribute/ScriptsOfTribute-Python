@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "scripts-of-tribute"
-version = "1.0.3"
+version = "1.0.4"
 authors = [
     { name="Ematerasu", email="tot.thesis.project@gmail.com" },
 ]
